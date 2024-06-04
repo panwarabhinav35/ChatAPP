@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const RegisterPage = (props) => {
   const [data, setData] = useState({
@@ -8,12 +9,12 @@ const RegisterPage = (props) => {
     password: "",
     profile_pic: "",
   });
-  const [uploadPhoto, setUploadPhoto] = useState();
+  const [uploadPhoto, setUploadPhoto] = useState("");
 
   const handleUploadPhoto = (e) => {
     const file = e.target.files[0];
     setUploadPhoto(file);
-    e.target.value = null;
+    e.target.value = "";
   };
 
   const handleOnChange = (e) => {
@@ -21,13 +22,18 @@ const RegisterPage = (props) => {
     let newData = { ...data, [name]: value };
     setData(newData);
   };
-  console.log(uploadPhoto);
+
+  const handleSubmit = (e)=>{
+    e.preventDefault();
+    console.log(data);
+
+  }
 
   return (
     <div className="mt-5">
-      <div className="bg-white w-full max-w-sm mx-2 rounded overflow-hidden p-4">
+      <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">
         <h3>Welcome to FastChat</h3>
-        <form>
+        <form className="grid gap-4 mt-5" onSubmit={(e)=>{handleSubmit(e)}}>
           <div className="flex flex-col gap-1">
             <label htmlFor="name">Name:</label>
             <input
@@ -80,7 +86,7 @@ const RegisterPage = (props) => {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      setUploadPhoto();
+                      setUploadPhoto("");
                     }}
                     className="text-lg ml-4 hover:text-red-600"
                   >
@@ -90,7 +96,6 @@ const RegisterPage = (props) => {
               </div>
             </label>
             <input
-              required
               type="file"
               id="profile_pic"
               name="profile_pic"
@@ -98,7 +103,9 @@ const RegisterPage = (props) => {
               onChange={(e) => handleUploadPhoto(e)}
             />
           </div>
+          <button className="bg-primary text-lg px-4 py-1 mt-2 rounded hover:bg-secondary font-bold text-white leading-relaxed">Register</button>
         </form>
+        <p className="my-3 text-center">Already have a account? <Link to="/email" className="hover:text-primary font-semibold">Login</Link></p>
       </div>
     </div>
   );
