@@ -6,7 +6,7 @@ async function registerUser(req, res) {
     const { name, email, password, profile_pic } = req.body;
     const checkEmail = await UserModel.findOne({ email });
     if (checkEmail) {
-      res.status(400).json({ message: "user already exist", error: true });
+      return res.status(400).json({ message: "user already exist", error: true });
     }
 
     const salt = await bcryptjs.genSalt(10);
