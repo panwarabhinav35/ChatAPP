@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { FaWindowClose } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { uploadFile } from "../helper/uploadFile";
+import toast from "react-hot-toast";
 
 const RegisterPage = (props) => {
   const [data, setData] = useState({
@@ -11,12 +12,12 @@ const RegisterPage = (props) => {
     profile_pic: "",
   });
   const [uploadPhoto, setUploadPhoto] = useState("");
-
+  const navigate = useNavigate();
   const handleUploadPhoto = async (e) => {
     const file = e.target.files[0];
     const uploadPhoto = await uploadFile(file);
     // console.log(uploadPhoto);
-    setUploadPhoto(file);
+    setUploadPhoto(file?.name);
     let newData = { ...data };
     newData.profile_pic = uploadPhoto.url;
     setData(newData);
@@ -28,13 +29,12 @@ const RegisterPage = (props) => {
     let newData = { ...data, [name]: value };
     setData(newData);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
     // console.log(data);
     try {
-      const URL = `http://localhost:8080/api/register`;
+      const URL = `${process.env.REACT_APP_BACKEND_URL}/api/register`;
       console.log("URL=>", URL);
       const response = await fetch(URL, {
         body: JSON.stringify(data),
@@ -43,7 +43,21 @@ const RegisterPage = (props) => {
       });
       const responseData = await response.json();
       console.log(responseData);
+      if (responseData.error) {
+        toast.error(responseData.message);
+      } else {
+        toast.success(responseData.message);
+        setData({
+          name: "",
+          email: "",
+          password: "",
+          profile_pic: "",
+        });
+        setUploadPhoto("");
+        navigate("/email");
+      }
     } catch (error) {
+      toast.error(error?.response?.data?.message);
       console.log(error);
     }
   };
@@ -102,11 +116,11 @@ const RegisterPage = (props) => {
               Photo:
               <div className="h-14 bg-slate-200 flex justify-center items-center border rounded hover:border-primary cursor-pointer">
                 <p className="text-sm max-w-[300px] text-ellipsis line-clamp-1">
-                  {uploadPhoto?.name
-                    ? uploadPhoto.name
+                  {uploadPhoto
+                    ? uploadPhoto
                     : "Upload Profile Photo"}
                 </p>
-                {uploadPhoto?.name && (
+                {uploadPhoto && (
                   <button
                     onClick={(e) => {
                       e.preventDefault();
@@ -124,7 +138,7 @@ const RegisterPage = (props) => {
               id="profile_pic"
               name="profile_pic"
               className="bg-slate-200 px-2 py-1 m-2 hidden"
-              onChange={(e) => handleUploadPhoto(e)}
+              onChange={(e) => {setUploadPhoto("Uploading....Please Wait..");handleUploadPhoto(e)}}
             />
           </div>
           <button className="bg-primary text-lg px-4 py-1 mt-2 rounded hover:bg-secondary font-bold text-white leading-relaxed">
