@@ -61,7 +61,6 @@ const RegisterPage = (props) => {
       console.log(error);
     }
   };
-
   return (
     <div className="mt-5">
       <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">

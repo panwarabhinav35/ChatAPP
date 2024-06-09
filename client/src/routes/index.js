@@ -6,6 +6,7 @@ import CheckPasswordPage from "../pages/CheckPasswordPage";
 import Home from "../pages/Home";
 import MessagePage from "../components/MessagePage";
 import AuthLayouts from "../layout";
+import Forgotpassword from "../pages/Forgotpassword";
 
 const router = createBrowserRouter([
   {
@@ -15,8 +16,8 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: (
-          <AuthLayouts >
-            <RegisterPage></RegisterPage>
+          <AuthLayouts>
+            <RegisterPage ></RegisterPage>
           </AuthLayouts>
         ),
       },
@@ -25,6 +26,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayouts>
             <CheckEmailPage />
+          </AuthLayouts>
+        ),
+      },
+      {
+        path: "forgot-password",
+        element: (
+          <AuthLayouts>
+            <Forgotpassword></Forgotpassword>
           </AuthLayouts>
         ),
       },

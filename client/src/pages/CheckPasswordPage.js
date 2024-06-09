@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import Avatar from "../components/Avatar";
+import { useDispatch } from "react-redux";
+import { setToken } from "../redux/userSlice";
 
 const CheckPasswordPage = () => {
+  const dispatch = useDispatch()
   const location = useLocation();
   const userId = location.state?._id;
   const [data, setData] = useState({
@@ -21,14 +25,13 @@ const CheckPasswordPage = () => {
     // console.log(data);
     try {
       const URL = `${process.env.REACT_APP_BACKEND_URL}/api/password`;
-      console.log("URL=>", URL);
       const response = await fetch(URL, {
         body: JSON.stringify(data),
         headers: { "Content-type": "application/json" },
         method: "POST",
       });
       const responseData = await response.json();
-      console.log(responseData);
+      // console.log(responseData);
       if (responseData.error) {
         toast.error(responseData.message);
       } else {
@@ -36,7 +39,7 @@ const CheckPasswordPage = () => {
         setData({
           password: "",
         });
-
+        dispatch(setToken(responseData.token))
         navigate("/");
       }
     } catch (error) {
@@ -47,7 +50,10 @@ const CheckPasswordPage = () => {
   return userId ? (
     <div className="mt-5">
       <div className="bg-white w-full max-w-sm rounded overflow-hidden p-4 mx-auto">
-        <h3>Welcome to FastChat</h3>
+        <div className="w-fit mx-auto mb-2">
+          <Avatar userInfo={location.state}></Avatar>
+        </div>
+        <h3>Welcome to FastChat {location.state.name}</h3>
         <form
           className="grid gap-4 mt-5"
           onSubmit={(e) => {
@@ -72,12 +78,17 @@ const CheckPasswordPage = () => {
             Log In
           </button>
         </form>
+        <p className="my-3 text-center">
+          Forgot Password?{" "}
+          <Link to="/forgot-password" className="hover:text-primary font-semibold">
+            Reset
+          </Link>
+        </p>
       </div>
     </div>
   ) : (
     <>
       <button className="bg-primary text-lg px-4 py-1 mt-2 rounded hover:bg-secondary font-bold text-white leading-relaxed">
-        
         <Link to="/email">Please Enter Email</Link>
       </button>
     </>

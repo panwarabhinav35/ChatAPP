@@ -28,7 +28,6 @@ const CheckEmailPage = () => {
         method: "POST",
       });
       const responseData = await response.json();
-      console.log(responseData);
       if (responseData.error) {
         toast.error(responseData.message);
       } else {
@@ -73,13 +72,13 @@ const CheckEmailPage = () => {
           </div>
 
           <button className="bg-primary text-lg px-4 py-1 mt-2 rounded hover:bg-secondary font-bold text-white leading-relaxed">
-            Register
+            Lets Go
           </button>
         </form>
         <p className="my-3 text-center">
           Dont have a account?{" "}
           <Link to="/register" className="hover:text-primary font-semibold">
-            Login
+            Register
           </Link>
         </p>
       </div>
