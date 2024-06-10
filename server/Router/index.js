@@ -11,7 +11,7 @@ const router = express.Router()
 router.post('/register', registerUser).post('/email', checkEmail).post('/password', checkPassword)
 
 //login user detail3
-router.get('/user-details', userDetails)
+router.post('/user-details', userDetails)
 //login user detail3
 router.get('/logout', logout)
 

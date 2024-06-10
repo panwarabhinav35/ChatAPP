@@ -10,8 +10,10 @@ const Home = () => {
   const getUserDetails = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/user-details`,{
-        method:"GET",
-        credentials:'include'
+        method:"POST",
+        body : JSON.stringify({token: userToken}),
+        headers: { "Content-type": "application/json" }
+        // credentials:'include'
       });
       const responseData = await response.json();
       if(responseData.success){
