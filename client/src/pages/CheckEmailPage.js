@@ -21,7 +21,6 @@ const CheckEmailPage = () => {
     // console.log(data);
     try {
       const URL = `${process.env.REACT_APP_BACKEND_URL}/api/email`;
-      console.log("URL=>", URL);
       const response = await fetch(URL, {
         body: JSON.stringify(data),
         headers: { "Content-type": "application/json" },

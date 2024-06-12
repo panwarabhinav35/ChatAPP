@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Outlet } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { loggedInToken, loggedInUser, setUser } from "../redux/userSlice";
+import Sidebar from "../components/Sidebar";
 
 const Home = () => {
   const dispatch = useDispatch();
   const userData = useSelector(loggedInUser)
+  const navigate = useNavigate();
   const userToken  = useSelector(loggedInToken)
   const getUserDetails = async () => {
     try {
@@ -18,6 +20,9 @@ const Home = () => {
       const responseData = await response.json();
       if(responseData.success){
         dispatch(setUser(responseData.data))
+        if(responseData.data.logout){
+          navigate('/email')
+        }
       }
     } catch (error) {
       console.log(error);
@@ -27,10 +32,12 @@ const Home = () => {
     getUserDetails();
   }, []);
 
-  console.log(userData,userToken)
+  // console.log(userData,userToken)
   return (
-    <div>
-      Home
+    <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen">
+      <section className="bg-white">
+        <Sidebar/>
+      </section>
       <section>
         <Outlet></Outlet>
       </section>
