@@ -3,7 +3,7 @@ const UserModel = require("../models/UserModel");
 
 async function updateUserDetails(req, res) {
   try {
-    const token = req.cookies.token || "";
+    const token = req.body.token || "";
     const user = await getUserDetailsFromToken(token);
     if(!user._id){
         return res.status(400).json({message:"You are logged out"})

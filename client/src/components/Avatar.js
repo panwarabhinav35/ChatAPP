@@ -3,7 +3,7 @@ import { FaCircleUser } from "react-icons/fa6";
 
 const Avatar = ({ userInfo }) => {
   return (
-    <div>
+    <div className="w-fit mx-auto mb-2">
       {userInfo?.profile_pic ? (
         <img className="rounded-full" src={userInfo.profile_pic} alt="profile_pic" height={120} width={120}></img>
       ) : (

@@ -6,12 +6,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loggedInUser, logout } from "../redux/userSlice";
 import Avatar from "./Avatar";
+import EditUserDetails from "./EditUserDetails";
 
 const Sidebar = () => {
   const [selected, setSelected] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(loggedInUser);
+
+  const [editUser, setEditUser] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -41,7 +44,11 @@ const Sidebar = () => {
           </div>
         </div>
         <div>
-          <div title={userInfo?.name} className={`w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded p-2`}>
+          <div
+            title={userInfo?.name}
+            className={`w-12 h-12 flex justify-center items-center cursor-pointer hover:bg-slate-200 rounded p-2`}
+            onClick={()=>setEditUser(!editUser)}
+          >
             <Avatar userInfo={userInfo}></Avatar>
           </div>
           <div
@@ -53,6 +60,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+      {editUser && <EditUserDetails setEditUser={setEditUser} userInfo={userInfo}/>}
     </div>
   );
 };
