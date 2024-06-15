@@ -9,7 +9,7 @@ import Avatar from "./Avatar";
 import EditUserDetails from "./EditUserDetails";
 
 const Sidebar = () => {
-  const [selected, setSelected] = useState("");
+  const [selected, setSelected] = useState("chat");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(loggedInUser);
@@ -21,7 +21,7 @@ const Sidebar = () => {
     navigate("/email");
   };
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full grid grid-cols-[48px,1fr]">
       <div className="bg-slate-100 w-12 h-full rounded-tr-lg rounded-br-lg py-5 flex flex-col justify-between">
         <div>
           <div
@@ -59,6 +59,16 @@ const Sidebar = () => {
             <HiOutlineLogout size={25} />
           </div>
         </div>
+      </div>
+      <div className="w-full">
+        <div className="h-16 flex items-center justify-center">
+          <h2 className="text-xl font-bold p-4 text-slate-800">
+            Message
+          </h2>
+        </div>
+        <div className="bg-slate-200 p-[0.5px]"></div>
+        <div className="h-[calc(100vh-65px)] overflow-x-hidden overflow-y-auto scrollbar"></div>
+
       </div>
       {editUser && <EditUserDetails setEditUser={setEditUser} userInfo={userInfo}/>}
     </div>
