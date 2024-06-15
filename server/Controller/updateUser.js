@@ -5,8 +5,8 @@ async function updateUserDetails(req, res) {
   try {
     const token = req.body.token || "";
     const user = await getUserDetailsFromToken(token);
-    if(!user._id){
-        return res.status(400).json({message:"You are logged out"})
+    if (!user._id) {
+      return res.status(400).json({ message: "You are logged out" });
     }
 
     const { name, profile_pic } = req.body;
@@ -17,9 +17,12 @@ async function updateUserDetails(req, res) {
       { new: true }
     );
 
+    const updatedUser = updateUser.toObject();
+    delete updatedUser.password;
+
     res
       .status(200)
-      .json({ message: "user updated", data: updateUser, success: true });
+      .json({ message: "user updated", data: updatedUser, success: true });
   } catch (error) {
     res.status(500).json({
       message: error.message || error,
