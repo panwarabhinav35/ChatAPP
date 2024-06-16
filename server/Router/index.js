@@ -5,6 +5,7 @@ const checkPassword = require('../Controller/checkPassword')
 const userDetails = require('../Controller/userDetail')
 const logout = require('../Controller/logout')
 const updateUserDetails = require('../Controller/updateUser')
+const searchUser = require('../Controller/searchUser')
 
 const router = express.Router()
 
@@ -17,5 +18,8 @@ router.get('/logout', logout)
 
 //update user
 router.patch('/update-user' ,updateUserDetails)
+
+//search user
+router.post('/search',searchUser)
 
 module.exports = router

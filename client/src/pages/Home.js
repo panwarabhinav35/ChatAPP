@@ -47,7 +47,6 @@ const Home = () => {
       <div className="lg:flex flex-col justify-center items-center gap hidden">
         <div >
           <img src={logo} width ={200} alt="logo"/>
-          
         </div>
         <p className="text-lg mt-2 text-slate-500">Select user to send message</p>
       </div>
