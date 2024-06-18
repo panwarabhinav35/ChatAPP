@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GoSearch } from "react-icons/go";
 import Loading from "./Loading";
 import UserSearchCard from "./UserSearchCard";
+import { AiOutlineCloseCircle } from "react-icons/ai";
 
 const SearchUser = ({ setOpenSearchUser }) => {
   const [searchUser, setSearchUser] = useState([]);
@@ -58,6 +59,9 @@ const SearchUser = ({ setOpenSearchUser }) => {
               </div>
             ))}
         </div>
+      </div>
+      <div className="absolute top-0 right-0 text-2xl lg:text-4xl hover:text-white cursor-pointer" onClick={()=>setOpenSearchUser(false)}>
+        <AiOutlineCloseCircle size={35}/>
       </div>
     </div>
   );
