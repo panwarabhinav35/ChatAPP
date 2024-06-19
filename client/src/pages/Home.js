@@ -34,7 +34,10 @@ const Home = () => {
     getUserDetails();
   }, []);
 
-  // console.log(userData,userToken)
+  // SOCKET CONNECTION
+
+
+
   const basePath = location.pathname === '/'
   return (
     <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen">

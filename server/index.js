@@ -4,8 +4,9 @@ const cors = require("cors");
 const connectDB = require("./config/connectDB");
 const router = require("./Router/index");
 const cookiesParser = require("cookie-parser");
+const { app , server} = require('./socket/index')
 
-const app = express();
+// const app = express();
 app.use(cookiesParser());
 const corsOptions = {
   origin: process.env.FRONTEND_URL, 
@@ -26,7 +27,7 @@ app.get("/", (req, res) => {
 app.use("/api", router);
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  server.listen(PORT, () => {
     console.log("Server running at", PORT);
   });
 });
