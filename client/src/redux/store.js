@@ -20,7 +20,7 @@ const rootReducer = combineReducers({
 
 // Configure persist settings
 const persistConfig = {
-  key: 'root',
+  key: 'chatApp',
   storage,
   whitelist: ['user'], // only persist these reducers
 }
