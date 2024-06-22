@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { MdOutlineChat } from "react-icons/md";
 import { FaUserPlus } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -9,19 +9,22 @@ import Avatar from "./Avatar";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
+import { SocketContext } from "../redux/contextStore";
 
 const Sidebar = () => {
   const [selected, setSelected] = useState("chat");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(loggedInUser);
-
+  const {setSocket} = useContext(SocketContext)
+  
   const [editUser, setEditUser] = useState(false);
   const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
-
+  
   const handleLogout = () => {
     dispatch(logout());
+    setSocket(null);
     navigate("/email");
   };
   return (
