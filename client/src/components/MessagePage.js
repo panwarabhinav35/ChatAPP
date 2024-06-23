@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SocketContext } from "../redux/contextStore";
-import { DataUser, setDataUser } from "../redux/userSlice";
+import { DataUser, loggedInUser, setDataUser } from "../redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RxDropdownMenu } from "react-icons/rx";
 import { IoIosArrowBack } from "react-icons/io";
@@ -18,6 +18,7 @@ import { MdSend } from "react-icons/md";
 const MessagePage = () => {
   const { userId } = useParams();
   const dispatch = useDispatch();
+  const currentUser = useSelector(loggedInUser);
   const dataUser = useSelector(DataUser);
   const { socketConnection } = useContext(SocketContext);
   const [openImageVideoUpload, setOpenImageVideoUpload] = useState(false);
@@ -77,6 +78,17 @@ const MessagePage = () => {
   };
   const handleSendMessage = (e) => {
     e.preventDefault();
+    if (message.text || message.imageUrl || message.videoUrl) {
+      if (socketConnection) {
+        socketConnection.emit("new message", {
+          sender: currentUser?._id,
+          reciever: userId,
+          text: message.text,
+          imageUrl: message.imageUrl,
+          videoUrl: message.videoUrl,
+        });
+      }
+    }
   };
   // console.log(message);
   return (

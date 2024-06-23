@@ -33,6 +33,7 @@ export const userSlice = createSlice({
         profile_pic: "",
         online: false,
       };
+      state.onlineUser =[]
     },
     setOnlineUser: (state, action) => {
       state.onlineUser = action.payload;

@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import {
-  loggedInToken,
-  setOnlineUser,
-  setUser,
-} from "../redux/userSlice";
+import { loggedInToken, setOnlineUser, setUser } from "../redux/userSlice";
 import Sidebar from "../components/Sidebar";
 import logo from "../assets/logo.png";
 import io from "socket.io-client";
@@ -14,7 +10,6 @@ import { SocketContext } from "../redux/contextStore";
 const Home = () => {
   const [socket, setSocket] = useState(null);
   const dispatch = useDispatch();
-  const userData = useSelector((state) => state.user);
   const navigate = useNavigate();
   const userToken = useSelector(loggedInToken);
   const location = useLocation();
@@ -53,20 +48,24 @@ const Home = () => {
       },
     });
 
-    socketConnection.on("onlineUser", (data) => {
+    const handleOnlineUser = (data) => {
+      // console.log(data)
       dispatch(setOnlineUser(data));
-    });
+    };
+
+    socketConnection.on("onlineUser", handleOnlineUser);
 
     setSocket(socketConnection);
     return () => {
+      socketConnection.off("onlineUser", handleOnlineUser);
       socketConnection.disconnect();
-      dispatch(setOnlineUser([]));
+
     };
-  }, []);
+  }, [dispatch, userToken]);
 
   const basePath = location.pathname === "/";
   return (
-    <SocketContext.Provider value={{socketConnection:socket, setSocket}}>
+    <SocketContext.Provider value={{ socketConnection: socket, setSocket }}>
       <div className="grid lg:grid-cols-[300px,1fr] h-screen max-h-screen">
         <section className={`bg-white ${!basePath && "hidden"} lg:block`}>
           <Sidebar />
