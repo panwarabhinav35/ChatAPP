@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SocketContext } from "../redux/contextStore";
 import { DataUser, loggedInUser, setDataUser } from "../redux/userSlice";
@@ -14,6 +14,7 @@ import Loading from "./Loading";
 import { IoCloseCircle } from "react-icons/io5";
 import backgroundImage from "../assets/wallapaper.jpeg";
 import { MdSend } from "react-icons/md";
+import moment from "moment";
 
 const MessagePage = () => {
   const { userId } = useParams();
@@ -28,12 +29,29 @@ const MessagePage = () => {
     videoUrl: "",
     imageUrl: "",
   });
+  const [allMessage, setAllMessage] = useState([]);
+  const currentMessage = useRef(null);
+
+  useEffect(() => {
+    if (currentMessage.current) {
+      currentMessage.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
+    }
+  }, [allMessage]);
+
   useEffect(() => {
     if (socketConnection) {
       socketConnection.emit("message-page", userId);
       socketConnection.on("message-user", (data) => {
         // console.log(data);
         dispatch(setDataUser(data));
+      });
+
+      socketConnection.on("message", (data) => {
+        // console.log(data);
+        setAllMessage(data);
       });
     }
   }, [dispatch, socketConnection, userId]);
@@ -88,6 +106,11 @@ const MessagePage = () => {
           videoUrl: message.videoUrl,
         });
       }
+      setMessage({
+        text: "",
+        videoUrl: "",
+        imageUrl: "",
+      });
     }
   };
   // console.log(message);
@@ -134,15 +157,48 @@ const MessagePage = () => {
         className="h-[calc(100vh-128px)] overflow-x-hidden overflow-y-scroll scrollbar relative bg-slate-200 bg-opacity-50"
         onClick={() => setOpenImageVideoUpload(false)}
       >
-        jvjhvhjvhjvjh
+        <div className="flex flex-col gap-2 py-2 mx-2" ref={currentMessage}>
+          {allMessage.map((msg, index) => (
+            <div
+              key={index}
+              className={`p-1 py-1 rounded w-fit max-w-[280px] md:max-w-sm lg:max-w-md ${
+                msg.msgByUserId === currentUser?._id
+                  ? "ml-auto bg-slate-200"
+                  : "bg-white"
+              }`}
+            >
+              <div className="w-full">
+                {msg?.imageUrl && (
+                  <img
+                    src={msg?.imageUrl}
+                    className="h-full w-full object-scale-down"
+                  />
+                )}
+              </div>
+              <div className="w-full">
+                {msg?.videoUrl && (
+                  <video
+                    src={msg.videoUrl}
+                    className="h-full w-full object-scale-down"
+                    controls
+                  />
+                )}
+              </div>
+              <p className="px-2">{msg.text}</p>
+              <p className="text-xs ml-auto w-fit">
+                {moment(msg.createdAt).format("hh:mm")}
+              </p>
+            </div>
+          ))}
+        </div>
         {/* Upload image Dispay */}
         {loading && (
-          <div className="h-full w-full flex justify-center items-center">
+          <div className="h-full w-full sticky bottom-0 flex justify-center items-center">
             <Loading></Loading>
           </div>
         )}
         {!loading && message.imageUrl && (
-          <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               className="w-fit p-2 absolute top-0 right-0 hover:text-primary cursor-pointer"
               onClick={() => {
@@ -161,7 +217,7 @@ const MessagePage = () => {
           </div>
         )}
         {!loading && message.videoUrl && (
-          <div className="w-full h-full bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
+          <div className="w-full h-full sticky bottom-0 bg-slate-700 bg-opacity-30 flex justify-center items-center rounded overflow-hidden">
             <div
               className="w-fit p-2 absolute top-0 right-0 hover:text-primary cursor-pointer"
               onClick={() => {

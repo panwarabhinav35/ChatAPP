@@ -89,6 +89,8 @@ io.on("connection", async (socket) => {
       ],
     }).populate('messages').sort({updatedAt: -1})
     // console.log(getConversation)
+    io.to(data?.sender).emit("message" ,getConversationMessage?.messages)
+    io.to(data?.reciever).emit("message" ,getConversationMessage?.messages)
 
 
   });
