@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { MdOutlineChat } from "react-icons/md";
 import { FaUserPlus } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
@@ -16,12 +16,43 @@ const Sidebar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(loggedInUser);
-  const {setSocket} = useContext(SocketContext)
-  
+  const { setSocket } = useContext(SocketContext);
+  const { socketConnection } = useContext(SocketContext);
+
   const [editUser, setEditUser] = useState(false);
   const [allUser, setAllUser] = useState([]);
   const [openSearchUser, setOpenSearchUser] = useState(false);
-  
+
+  useEffect(() => {
+    if (socketConnection) {
+      socketConnection.emit("sidebar", userInfo._id);
+
+      socketConnection.on("conversation", (data) => {
+        const conversationUserData = data.map((conversationUser, index) => {
+          if (
+            conversationUser?.sender?._id === conversationUser?.reciever?._id
+          ) {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser?.sender,
+            };
+          } else if (conversationUser?.reciever?._id === userInfo?._id) {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser?.sender,
+            };
+          } else {
+            return {
+              ...conversationUser,
+              userDetails: conversationUser?.reciever,
+            };
+          }
+        });
+        setAllUser(conversationUserData);
+      });
+    }
+  }, [socketConnection, userInfo]);
+
   const handleLogout = () => {
     dispatch(logout());
     setSocket(null);
@@ -89,7 +120,17 @@ const Sidebar = () => {
               </p>
             </div>
           ) : (
-            <></>
+            <>
+              {allUser.map((conv, index) => (
+                <div key={index}>
+                  <div className="flex justify-start w-auto gap2">
+                    <div>
+                      <Avatar userInfo={conv?.userDetails} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </>
           )}
         </div>
       </div>

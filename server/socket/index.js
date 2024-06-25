@@ -69,7 +69,7 @@ io.on("connection", async (socket) => {
       text: data.text,
       imageUrl: data.imageUrl,
       videoUrl: data.videoUrl,
-      msgByUserId : data?.sender
+      msgByUserId: data?.sender,
     });
 
     const saveMessage = await message.save();
@@ -87,12 +87,45 @@ io.on("connection", async (socket) => {
         { sender: data?.sender, reciever: data?.reciever },
         { sender: data?.reciever, reciever: data?.sender },
       ],
-    }).populate('messages').sort({updatedAt: -1})
+    })
+      .populate("messages")
+      .sort({ updatedAt: -1 });
     // console.log(getConversation)
-    io.to(data?.sender).emit("message" ,getConversationMessage?.messages)
-    io.to(data?.reciever).emit("message" ,getConversationMessage?.messages)
+    io.to(data?.sender).emit("message", getConversationMessage?.messages);
+    io.to(data?.reciever).emit("message", getConversationMessage?.messages);
+  });
 
+  //sidebar
+  socket.on("sidebar", async (currentUserId) => {
+    console.log(currentUserId);
+    const currentUserConversation = await ConversationModel.find({
+      $or: [{ sender: currentUserId }, { reciever: currentUserId }],
+    })
+      .sort({ updatedAt: -1 })
+      .populate("messages")
+      .populate({
+        path: "sender",
+        select: "-password",
+      })
+      .populate({
+        path: "reciever",
+        select: "-password",
+      });
 
+    const conversation = currentUserConversation.map((conv) => {
+      const countUnseenMsg = conv.messages.reduce(
+        (preve, curr) => preve + (curr.seen ? 0 : 1),
+        0
+      );
+      return {
+        _id: conv?._id,
+        sender: conv?.sender,
+        reciever: conv?.reciever,
+        unseenMsg: countUnseenMsg,
+        lastMsg: conv.messages[conv?.messages?.length - 1],
+      };
+    });
+    socket.emit("conversation", conversation);
   });
 
   //disconnect

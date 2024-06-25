@@ -55,6 +55,10 @@ const MessagePage = () => {
       });
     }
   }, [dispatch, socketConnection, userId]);
+
+  useEffect(() => {
+    getAllMessages();
+  }, [dataUser]);
   // console.log(dataUser);
   const handleUploadImage = async (e) => {
     const file = e.target.files[0];
@@ -111,6 +115,24 @@ const MessagePage = () => {
         videoUrl: "",
         imageUrl: "",
       });
+    }
+  };
+
+  const getAllMessages = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_URL}/api/messages`,
+        {
+          method: "POST",
+          body: JSON.stringify({ sender: currentUser?._id, reciever: userId }),
+          headers: { "Content-type": "application/json" },
+        }
+      );
+
+      const responseData = await response.json()
+      setAllMessage(responseData.data)
+    } catch (error) {
+      console.log(error);
     }
   };
   // console.log(message);
