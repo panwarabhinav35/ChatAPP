@@ -98,34 +98,36 @@ io.on("connection", async (socket) => {
   //sidebar
   socket.on("sidebar", async (currentUserId) => {
     console.log(currentUserId);
-    const currentUserConversation = await ConversationModel.find({
-      $or: [{ sender: currentUserId }, { reciever: currentUserId }],
-    })
-      .sort({ updatedAt: -1 })
-      .populate("messages")
-      .populate({
-        path: "sender",
-        select: "-password",
+    if (currentUserId) {
+      const currentUserConversation = await ConversationModel.find({
+        $or: [{ sender: currentUserId }, { reciever: currentUserId }],
       })
-      .populate({
-        path: "reciever",
-        select: "-password",
-      });
+        .sort({ updatedAt: -1 })
+        .populate("messages")
+        .populate({
+          path: "sender",
+          select: "-password",
+        })
+        .populate({
+          path: "reciever",
+          select: "-password",
+        });
 
-    const conversation = currentUserConversation.map((conv) => {
-      const countUnseenMsg = conv.messages.reduce(
-        (preve, curr) => preve + (curr.seen ? 0 : 1),
-        0
-      );
-      return {
-        _id: conv?._id,
-        sender: conv?.sender,
-        reciever: conv?.reciever,
-        unseenMsg: countUnseenMsg,
-        lastMsg: conv.messages[conv?.messages?.length - 1],
-      };
-    });
-    socket.emit("conversation", conversation);
+      const conversation = currentUserConversation.map((conv) => {
+        const countUnseenMsg = conv.messages.reduce(
+          (preve, curr) => preve + (curr.seen ? 0 : 1),
+          0
+        );
+        return {
+          _id: conv?._id,
+          sender: conv?.sender,
+          reciever: conv?.reciever,
+          unseenMsg: countUnseenMsg,
+          lastMsg: conv.messages[conv?.messages?.length - 1],
+        };
+      });
+      socket.emit("conversation", conversation);
+    }
   });
 
   //disconnect

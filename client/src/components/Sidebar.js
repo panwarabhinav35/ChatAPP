@@ -3,21 +3,25 @@ import { MdOutlineChat } from "react-icons/md";
 import { FaUserPlus } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { loggedInUser, logout } from "../redux/userSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { MsgSent, loggedInUser, logout } from "../redux/userSlice";
 import Avatar from "./Avatar";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
 import SearchUser from "./SearchUser";
 import { SocketContext } from "../redux/contextStore";
+import { FaImage } from "react-icons/fa6";
+import { FaVideo } from "react-icons/fa";
 
 const Sidebar = () => {
   const [selected, setSelected] = useState("chat");
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userInfo = useSelector(loggedInUser);
+  const messageSent = useSelector(MsgSent)
   const { setSocket } = useContext(SocketContext);
   const { socketConnection } = useContext(SocketContext);
+  // console.log(messageSent)
 
   const [editUser, setEditUser] = useState(false);
   const [allUser, setAllUser] = useState([]);
@@ -25,7 +29,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     if (socketConnection) {
-      socketConnection.emit("sidebar", userInfo._id);
+      socketConnection.emit("sidebar", userInfo?._id);
 
       socketConnection.on("conversation", (data) => {
         const conversationUserData = data.map((conversationUser, index) => {
@@ -51,7 +55,7 @@ const Sidebar = () => {
         setAllUser(conversationUserData);
       });
     }
-  }, [socketConnection, userInfo]);
+  }, [socketConnection, userInfo, messageSent]);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -122,13 +126,41 @@ const Sidebar = () => {
           ) : (
             <>
               {allUser.map((conv, index) => (
-                <div key={index}>
-                  <div className="flex justify-start w-auto gap2">
-                    <div>
-                      <Avatar userInfo={conv?.userDetails} />
+                <Link to={`/${conv?.userDetails?._id}`} key={index} className="flex items-center gap-2 py-3 px-2 border  hover:border-secondary cursor-pointer rounded bg-slate-100">
+                  <div>
+                    <Avatar userInfo={conv?.userDetails} />
+                  </div>
+                  <div>
+                    <h3 className="text-ellipsis line-clamp-1 font-semibold">
+                      {conv?.userDetails?.name}
+                    </h3>
+                    <div className="text-xs text-slate-500 flex items-center gap-1">
+                      <div>
+                        {conv?.lastMsg?.imageUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaImage />
+                            </span>
+                            <span>
+                              Image
+                            </span>
+                          </div>
+                        )}
+                        {conv?.lastMsg?.videoUrl && (
+                          <div className="flex items-center gap-1">
+                            <span>
+                              <FaVideo />
+                            </span>
+                            <span>
+                              Video
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs">{conv?.lastMsg?.text}</p>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </>
           )}

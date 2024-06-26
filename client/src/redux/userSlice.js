@@ -10,6 +10,7 @@ const initialState = {
     email: "",
     profile_pic: "",
     online: false,
+    msgSent: false,
   },
 };
 
@@ -33,7 +34,7 @@ export const userSlice = createSlice({
         profile_pic: "",
         online: false,
       };
-      state.onlineUser =[]
+      state.onlineUser = [];
     },
     setOnlineUser: (state, action) => {
       state.onlineUser = action.payload;
@@ -41,13 +42,23 @@ export const userSlice = createSlice({
     setDataUser: (state, action) => {
       state.dataUser = action.payload;
     },
+    setMsgSent: (state, action) => {
+      state.msgSent = action.payload;
+    },
   },
 });
 
-export const { setToken, setUser, logout, setOnlineUser, setDataUser } =
-  userSlice.actions;
+export const {
+  setToken,
+  setUser,
+  logout,
+  setOnlineUser,
+  setDataUser,
+  setMsgSent,
+} = userSlice.actions;
 export const loggedInUser = (state) => state.user.userInfo;
 export const loggedInToken = (state) => state.user.token;
 export const onLineUser = (state) => state.user.onlineUser;
 export const DataUser = (state) => state.user.dataUser;
+export const MsgSent = (state) => state.user.msgSent;
 export default userSlice.reducer;

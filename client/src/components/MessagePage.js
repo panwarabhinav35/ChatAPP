@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SocketContext } from "../redux/contextStore";
-import { DataUser, loggedInUser, setDataUser } from "../redux/userSlice";
+import { DataUser, MsgSent, loggedInUser, setDataUser, setMsgSent } from "../redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RxDropdownMenu } from "react-icons/rx";
 import { IoIosArrowBack } from "react-icons/io";
@@ -22,6 +22,7 @@ const MessagePage = () => {
   const currentUser = useSelector(loggedInUser);
   const dataUser = useSelector(DataUser);
   const { socketConnection } = useContext(SocketContext);
+  const messageSent = useSelector(MsgSent)
   const [openImageVideoUpload, setOpenImageVideoUpload] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({
@@ -52,9 +53,10 @@ const MessagePage = () => {
       socketConnection.on("message", (data) => {
         // console.log(data);
         setAllMessage(data);
+        dispatch(setMsgSent(!messageSent))
       });
     }
-  }, [dispatch, socketConnection, userId]);
+  }, [dispatch, socketConnection, userId,messageSent]);
 
   useEffect(() => {
     getAllMessages();
@@ -109,6 +111,7 @@ const MessagePage = () => {
           imageUrl: message.imageUrl,
           videoUrl: message.videoUrl,
         });
+        
       }
       setMessage({
         text: "",
@@ -194,6 +197,7 @@ const MessagePage = () => {
                   <img
                     src={msg?.imageUrl}
                     className="h-full w-full object-scale-down"
+                    alt=""
                   />
                 )}
               </div>
