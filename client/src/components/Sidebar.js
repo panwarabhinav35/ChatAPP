@@ -4,7 +4,7 @@ import { FaUserPlus } from "react-icons/fa";
 import { HiOutlineLogout } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { MsgSent, loggedInUser, logout } from "../redux/userSlice";
+import { MsgSent, loggedInUser, logout, setMsgSent } from "../redux/userSlice";
 import Avatar from "./Avatar";
 import EditUserDetails from "./EditUserDetails";
 import { FiArrowUpLeft } from "react-icons/fi";
@@ -53,6 +53,9 @@ const Sidebar = () => {
           }
         });
         setAllUser(conversationUserData);
+      });
+      socketConnection.on("message", (data) => {
+        dispatch(setMsgSent(!messageSent))
       });
     }
   }, [socketConnection, userInfo, messageSent]);
